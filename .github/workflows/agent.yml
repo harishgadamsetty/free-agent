@@ -2,9 +2,8 @@ name: 24/7 Cloud Free Agent
 
 on:
   schedule:
-    # This runs your agent automatically every 3 hours, 24/7
     - cron: '0 */3 * * *'
-  workflow_dispatch: # Allows you to run it manually whenever you want
+  workflow_dispatch:
 
 jobs:
   run-agent:
