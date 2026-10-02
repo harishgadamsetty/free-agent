@@ -2,17 +2,24 @@ import os
 import time
 from groq import Groq
 
-# Initialize the Groq client using your environment variable
-# (Make sure to replace "your_groq_api_key_here" if testing locally, 
-# or use environment variables for security)
-client = Groq(api_key=os.environ.get("GROQ_API_KEY", "your_groq_api_key_here"))
+# Check if the API key is loaded properly
+api_key = os.environ.get("GROQ_API_KEY")
+if not api_key:
+  print(
+      "ERROR: GROQ_API_KEY environment variable is missing! Check your GitHub"
+      " Secrets."
+  )
+  exit(1)
+
+# Initialize the Groq client
+client = Groq(api_key=api_key)
 
 
 def run_agent_task():
   try:
-    # Asking the model to perform a task/check
+    print("Sending request to Groq AI...")
     completion = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",  # Fast and smart free model on Groq
+        model="llama-3.3-70b-versatile",
         messages=[
             {
                 "role": "system",
@@ -28,22 +35,17 @@ def run_agent_task():
             },
         ],
         temperature=0.7,
-        max_tokens=500,
+        max_tokens=300,
     )
 
-    print("--- Agent Execution Result ---")
+    print("--- Agent Execution Success ---")
     print(completion.choices[0].message.content)
 
   except Exception as e:
-    print(f"Error running agent: {e}")
+    print(f"An error occurred during API execution: {e}")
+    exit(1)
 
 
-# 24/7 Loop Structure
-# In a real 24/7 setup, we add a delay to respect free-tier rate limits.
 if __name__ == "__main__":
-  print("Agent started...")
-  while True:
-    run_agent_task()
-    # Sleep for 1 hour (3600 seconds) to stay safely within free limits
-    print("Going to sleep for 1 hour...\n")
-    time.sleep(3600)
+  print("Agent started successfully in the cloud.")
+  run_agent_task()
