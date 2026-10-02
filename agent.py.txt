@@ -1,0 +1,49 @@
+import os
+import time
+from groq import Groq
+
+# Initialize the Groq client using your environment variable
+# (Make sure to replace "your_groq_api_key_here" if testing locally, 
+# or use environment variables for security)
+client = Groq(api_key=os.environ.get("GROQ_API_KEY", "your_groq_api_key_here"))
+
+
+def run_agent_task():
+  try:
+    # Asking the model to perform a task/check
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",  # Fast and smart free model on Groq
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful 24/7 autonomous cloud assistant."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Perform your scheduled background check and report status."
+                ),
+            },
+        ],
+        temperature=0.7,
+        max_tokens=500,
+    )
+
+    print("--- Agent Execution Result ---")
+    print(completion.choices[0].message.content)
+
+  except Exception as e:
+    print(f"Error running agent: {e}")
+
+
+# 24/7 Loop Structure
+# In a real 24/7 setup, we add a delay to respect free-tier rate limits.
+if __name__ == "__main__":
+  print("Agent started...")
+  while True:
+    run_agent_task()
+    # Sleep for 1 hour (3600 seconds) to stay safely within free limits
+    print("Going to sleep for 1 hour...\n")
+    time.sleep(3600)
